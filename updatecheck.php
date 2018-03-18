@@ -68,13 +68,21 @@ function hi_updateQuickInfo() {
     $remoteKey = 1;
     $compare = '<';
 
-    $localVersion = hi_versionInfo($_POST['versionstr']);
+    try {
+        $localVersion = hi_versionInfo($_POST['versionstr']);
+    } catch (RuntimeException $ex) {
+        $localVersion = null;
+    }
     if (count($localVersion) !== 7) {
         return;
     }
     $timeout = intval($plugin_cf['hi_updatecheck']['autocheck_timeout']);
-    $versionStr = hi_fsFileGetContents(trim($localVersion[6]), $timeout);
-    $remoteVersion = hi_versionInfo($versionStr);
+    try {
+        $versionStr = hi_fsFileGetContents(trim($localVersion[6]), $timeout);
+        $remoteVersion = hi_versionInfo($versionStr);
+    } catch (RuntimeException $ex) {
+        $versionStr = $remoteVersion = null;
+    }
     if (count($remoteVersion) !== 7) {
         return;
     }
@@ -171,7 +179,11 @@ function hi_updateInfo($pluginname = '') {
     foreach ($p_tx as $key => $val) {
         $p_tx[$key] = htmlspecialchars(strip_tags($val), ENT_QUOTES, 'UTF-8');
     }
-    $local = hi_versionInfo($_POST['versionstr']);
+    try {
+        $local = hi_versionInfo($_POST['versionstr']);
+    } catch (RuntimeException $ex) {
+        $local = null;
+    }
     $localVersion = array();
     //superfluous, but anyway
     foreach ($local as $val) {
@@ -181,14 +193,19 @@ function hi_updateInfo($pluginname = '') {
     if (strtolower(pathinfo($url, PATHINFO_EXTENSION)) != 'nfo') {
         die('Access denied!');
     }
-    $remote = hi_fsFileGetContents($url, 15);
-    $remote = hi_versionInfo($remote);
+    $fail_reason = 'unknown';
     $remoteVersion = array();
-    if ($remote) {
-        foreach ($remote as $val) {
-            //sanitize
-            $remoteVersion[] = htmlspecialchars(strip_tags($val), ENT_QUOTES, 'UTF-8');
+    try {
+        $remote = hi_fsFileGetContents($url, 15);
+        $remote = hi_versionInfo($remote);
+        if ($remote) {
+            foreach ($remote as $val) {
+                //sanitize
+                $remoteVersion[] = htmlspecialchars(strip_tags($val), ENT_QUOTES, 'UTF-8');
+            }
         }
+    } catch (RuntimeException $ex) {
+        $fail_reason = $ex->getMessage();
     }
     //set defaults
     $css_suff = '';
@@ -196,7 +213,8 @@ function hi_updateInfo($pluginname = '') {
         $css_suff .= '_list'; //change CSS-Classes, if not called from another plugin
 
     $css_class = 'upd_error' . $css_suff;
-    $msg = '<b>' . sprintf($p_tx['message_fail'], ucfirst(htmlspecialchars(strip_tags($pluginname), ENT_QUOTES, 'UTF-8'))) . '</b>';
+    $msg = '<b>' . sprintf($p_tx['message_fail'], ucfirst(htmlspecialchars(strip_tags($pluginname), ENT_QUOTES, 'UTF-8'))) . '</b>'
+        . '<br>' . sprintf($p_tx['message_fail_reason'], XH_hsc($fail_reason));
     //compare versions
     if (!$remoteVersion || !$localVersion) {
         return sprintf('<div class="%s">%s</div>', $css_class, $msg);
@@ -261,12 +279,12 @@ function hi_updateInstalledScripts() {
 function hi_versionInfo($versionStr = FALSE) {
 
     if (!$versionStr) {
-        return FALSE; //Error
+        throw new RuntimeException('version.nfo is empty');
     }
     $versionInfo = array();
     $versionInfo = explode(',', $versionStr);
     if (count($versionInfo) !== 7) {
-        return FALSE; //Error
+        throw new RuntimeException('version.nfo is invalid');
     }
     return $versionInfo;
 }
@@ -371,7 +389,7 @@ function hi_fsFileGetContents($url, $timeout = 30) {
     $parsedurl = parse_url($url);
     // determine host, catch invalid calls
     if (empty($parsedurl['host']))
-        return null;
+        throw new RuntimeException('host missing in URL ' . XH_hsc($url));
     $host = $parsedurl['host'];
     // determine path
     $documentpath = empty($parsedurl['path']) ? '/' : $documentpath = $parsedurl['path'];
@@ -395,7 +413,7 @@ function hi_fsFileGetContents($url, $timeout = 30) {
     // open socket
     $fp = fsockopen($scheme . $host, $port, $errno, $errstr, $timeout);
     if (!$fp)
-        return null;
+        throw new RuntimeException("cannot connect to $scheme$host:$port");
 
     // send request
     $request = "GET {$documentpath} HTTP/1.0\r\n";
@@ -428,7 +446,7 @@ function hi_fsFileGetContents($url, $timeout = 30) {
         preg_match('~Location: (?P<location>\S+)~', $header, $match);
         $result = hi_fsFileGetContents($match['location'], $timeout);
     } elseif ($status >= 400) { // Any error
-        return false;
+        throw new RuntimeException("server responded with $status");
     }
 
     // return reult

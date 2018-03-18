@@ -8,6 +8,7 @@
 	$plugin_tx['hi_updatecheck']['message_searching']="Searching updates for";
 	$plugin_tx['hi_updatecheck']['message_download']="Visit downloadpage »";
 	$plugin_tx['hi_updatecheck']['message_fail']="Updatecheck for %s failed!";
+	$plugin_tx['hi_updatecheck']['message_fail_reason']="Reason: %s.";
 	$plugin_tx['hi_updatecheck']['message_up-to-date']="is up to date.";
 	$plugin_tx['hi_updatecheck']['message_update-available']="For %s is the new version %s available!";
 	$plugin_tx['hi_updatecheck']['message_update-critical']="This is a critical update! Please install the new version as soon as possible!";
