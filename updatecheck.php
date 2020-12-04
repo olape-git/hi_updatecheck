@@ -48,7 +48,7 @@ function hi_updateQuickCheck($pluginname) {
             'versionstr' => $versionStr,
             'do_quickcheck' => 1
         );
-        $t = '<script type = "text/javascript">
+        $t = '<script>
                 jQuery.ajax({
                     type: "POST",
                     url: "' . $url . '",
@@ -142,7 +142,7 @@ function hi_updateCheck($pluginname = '', $single_check = 1) {
             . '</p></div>';
     $t .= '<div id="upd_' . $pluginname . '_Info"></div>';
     $t .= '</div>';
-    $t .= '<script type = "text/javascript">
+    $t .= '<script>
                 jQuery.ajax({
                     type: "POST",
                     url: "' . $url . '",
@@ -155,8 +155,8 @@ function hi_updateCheck($pluginname = '', $single_check = 1) {
                         jQuery(\'#upd_' . $pluginname . '_Info\').html(\'Sorry, a problem has occurred while checking ' . $pluginname . '.\');
                     },
                     success: function(msg){
-			jQuery(\'#upd_' . $pluginname . '_Info\').html(msg);
-			jQuery(\'#upd_' . $pluginname . '_loading\')
+            jQuery(\'#upd_' . $pluginname . '_Info\').html(msg);
+            jQuery(\'#upd_' . $pluginname . '_loading\')
                             .css(\'display\',\'none\');
                     }
                 });
@@ -267,7 +267,7 @@ function hi_updateInstalledScripts() {
     $handle = opendir($pth['folder']['plugins']);
     if ($handle) {
         while ($installed_plugin = readdir($handle)) {
-            if (strpos($installed_plugin, '.') === false && $installed_plugin != $pluginloader_cfg['foldername_pluginloader'] && is_dir($pth['folder']['plugins'] . $installed_plugin) && !in_array(strtolower($installed_plugin), $ignore)) {
+            if (strpos($installed_plugin, '.') === false && (!isset($pluginloader_cfg['foldername_pluginloader']) || $installed_plugin != $pluginloader_cfg['foldername_pluginloader']) && is_dir($pth['folder']['plugins'] . $installed_plugin) && !in_array(strtolower($installed_plugin), $ignore)) {
                 $installed_plugins[] = $installed_plugin;
             }
         }
@@ -297,7 +297,7 @@ function hi_updateNotify() {
     //Display info-icon in editmenu, if updates are available
     global $sn, $o, $plugin_tx;
     $o .= "\n";
-    $o .= '<script type="text/javascript">
+    $o .= '<script>
                     jQuery(document).ready(function($){
                         $("#editmenu_update").css("display","block"); //before xh1.6
                         $("#xh_adminmenu_update").css("display","block"); //sice xh1.6RC
@@ -308,7 +308,7 @@ function hi_updateNotify() {
     if (isset($_GET['sysinfo'])) {
         $upd_msg_sysinfo = '<div class="upd_info">'
                 . '<b>' . $plugin_tx['hi_updatecheck']['message_sysinfo-update-found'] . '</b>'
-                . tag('br')
+                . '<br>'
                 . '<a href="' . $sn . '?&amp;hi_updatecheck&amp;admin=plugin_main&amp;normal">' . $plugin_tx['hi_updatecheck']['message_sysinfo-link'] . '</a>'
                 . '</div>';
         $o .= $upd_msg_sysinfo . "\n";
@@ -367,17 +367,12 @@ function hi_updateSetStatus() {
 function upd_addMenuEntry() {
     global $sn, $plugin_tx, $pth;
 
-    $imgtag = tag('img src=\"' . $pth['folder']['plugins']
-            . 'hi_updatecheck/images/update-available-24.png\" '
-            . 'title=\"' . $plugin_tx['hi_updatecheck']['message_qc-update-found'] . '\" '
-            . 'alt=\"' . $plugin_tx['hi_updatecheck']['message_qc-update-found'] . '\"'
-    );
     $href = $sn . '?&amp;hi_updatecheck&amp;admin=plugin_main&amp;normal';
     $t = "\n";
     $t .= '<script>
     jQuery(document).ready(function($){
         $("#edit_menu").append("<li id=\"editmenu_update\"><a href=\"' . $href . '\"><\/a></li>");                   //before xh1.6
-        $("#xh_adminmenu > ul").append("<li id=\"xh_adminmenu_update\"><a href=\"' . $href . '\" title=\"' . $plugin_tx['hi_updatecheck']['message_sysinfo-update-found'] . '\"><\/a></li>");       //since xh1.6RC
+        $("#xh_adminmenu > ul").append("<li id=\"xh_adminmenu_update\"><a href=\"' . $href . '\"><\/a></li>");       //since xh1.6RC
     });
     </script>' . "\n";
     return $t;
