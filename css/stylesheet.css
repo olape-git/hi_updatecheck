@@ -41,7 +41,7 @@ ul.upd_list {
 	list-style: none !important;
 }
 ul.upd_list li {
-	padding: 0;
+	padding: .5em;
 	margin: 0 0 .25em 0 !important;
 	list-style-type: none !important;
 }
@@ -94,7 +94,7 @@ img.upd_plugin_icon {
 li#editmenu_update,
 li#xh_adminmenu_update {
 	margin: 0 .5em 0 0;
-	width: 2em !important;
+	width: 2em;
 }
 li#editmenu_update a,
 li#xh_adminmenu_update a {
