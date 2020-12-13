@@ -374,12 +374,12 @@ function upd_addMenuEntry() {
     );
     $href = $sn . '?&amp;hi_updatecheck&amp;admin=plugin_main&amp;normal';
     $t = "\n";
-    $t .= '<script type="text/javascript">
-                    jQuery(document).ready(function($){
-                        $("#edit_menu").append("<li id=\"editmenu_update\"><a href=\"' . $href . '\">' . $imgtag . '<\/a></li>");                   //before xh1.6
-                        $("#xh_adminmenu > ul").append("<li id=\"xh_adminmenu_update\"><a href=\"' . $href . '\">' . $imgtag . '<\/a></li>");       //since xh1.6RC
-                    });
-            </script>' . "\n";
+    $t .= '<script>
+    jQuery(document).ready(function($){
+        $("#edit_menu").append("<li id=\"editmenu_update\"><a href=\"' . $href . '\"><\/a></li>");                   //before xh1.6
+        $("#xh_adminmenu > ul").append("<li id=\"xh_adminmenu_update\"><a href=\"' . $href . '\" title=\"' . $plugin_tx['hi_updatecheck']['message_sysinfo-update-found'] . '\"><\/a></li>");       //since xh1.6RC
+    });
+    </script>' . "\n";
     return $t;
 }
 
