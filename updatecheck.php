@@ -220,6 +220,10 @@ function hi_updateInfo($pluginname = '') {
             $msg .= '<p>' . $remoteVersion[4] . '</p>';
         }
         $msg .= '<p><a target="_blank" href="' . $remoteVersion[5] . '">' . $p_tx['message_download'] . '</a></p>';
+    } else {
+        // pre-release
+        $msg = '<b>' . sprintf($p_tx['message_version-newer'], $localVersion[0], $remoteVersion[2]) . '</b>';
+        $css_class = 'upd_info' . $css_suff;
     }
     //output
     return sprintf('<div class="%s">%s</div>', $css_class, $msg);
