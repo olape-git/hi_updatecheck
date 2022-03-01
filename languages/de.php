@@ -8,6 +8,7 @@
     $plugin_tx['hi_updatecheck']['message_searching']="Suche nach Updates für";    
     $plugin_tx['hi_updatecheck']['message_download']="Zur Downloadseite »";
     $plugin_tx['hi_updatecheck']['message_fail']="Update-Prüfung für %s fehlgeschlagen!";
+    $plugin_tx['hi_updatecheck']['message_fail_reason']="Grund: %s.";
     $plugin_tx['hi_updatecheck']['message_up-to-date']="ist aktuell.";
     $plugin_tx['hi_updatecheck']['message_update-available']="Für %s ist die neue Version %s verfügbar!";
     $plugin_tx['hi_updatecheck']['message_update-critical']="Dies ist ein kritisches Update! Bitte aktualisieren Sie Ihr System zeitnah!";
