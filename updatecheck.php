@@ -456,21 +456,3 @@ function hi_fsFileGetContents($url, $timeout = 30) {
     // return reult
     return $result;
 }
-
-if (!function_exists('json_encode')) {
-// make sure the class wasn't already included by another plugin
-    if (!class_exists('CMB_JSON')) {
-        include_once $pth['folder']['plugins'] . 'hi_updatecheck/JSON.php';
-    }
-
-    /* function json_encode($value) {
-      return CMB_JSON::instance()->encode($value);
-      }
-     */
-
-    function json_encode($value) {
-        $json = CMB_JSON::instance();
-        return $json->encode($value);
-    }
-
-}
