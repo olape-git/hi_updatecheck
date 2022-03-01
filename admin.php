@@ -36,7 +36,7 @@ define('UPD_VERSION', '1.4');
 define('UPD_DATE', '2016-01-10');
 
 //Path to core-Versioninfo
-define('CMSIMPLE_XH_VERSIONINFO', 'http://www.cmsimple-xh.org/downloads/versioninfo/cmsimple_xh-version.nfo');
+define('CMSIMPLE_XH_VERSIONINFO', 'http://www.cmsimple-xh.org/userfiles/downloads/versioninfo/cmsimple_xh-version.nfo');
 
 include_once($pth['folder']['plugins'] . 'jquery/jquery.inc.php');
 include_jQuery();
