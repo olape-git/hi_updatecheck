@@ -134,12 +134,15 @@ function hi_updateCheck($pluginname = '', $single_check = 1) {
         'single_check' => $single_check
     );
     $t = '<div class="upd_container">';
-    $t .= '<div id="upd_' . $pluginname . '_loading"><p>'
-            . $p_tx['message_searching'] . ' '
-            . ucfirst($pluginname) . ' ...' . tag('br')
-            . tag('img src="' . $p_pth
-                    . '/images/ajax-loader.gif" style="padding: 5px 0 15px 0;"')
-            . '</p></div>';
+    $t .= '<div id="upd_'
+        . $pluginname
+        . '_loading"><p>'
+        . $p_tx['message_searching']
+        . ' '
+        . ucfirst($pluginname)
+        . ' ...<br><img src="'
+        . $p_pth
+        . '/images/ajax-loader.gif" style="padding: 5px 0 15px 0;"></p></div>';
     $t .= '<div id="upd_' . $pluginname . '_Info"></div>';
     $t .= '</div>';
     $t .= '<script>
@@ -252,8 +255,8 @@ function hi_updateNoVersioninfo($pluginname = '') {
     $p_tx = $plugin_tx['hi_updatecheck'];
 
     $css_class = 'upd_noinfo_list';
-    $msg = '<b>' . sprintf($p_tx['message_no-versioninfo1'], ucfirst($pluginname), ENT_QUOTES, 'UTF-8') . '</b>';
-    $msg .= tag('br');
+    $msg = '<b>'. sprintf($p_tx['message_no-versioninfo1'], ucfirst($pluginname), ENT_QUOTES, 'UTF-8') . '</b>';
+    $msg .= '<br>';
     $msg .= $p_tx['message_no-versioninfo2'];
     return sprintf('<div class="upd_container"><div class="%s">%s</div></div>', $css_class, $msg);
 }
@@ -296,13 +299,13 @@ function hi_versionInfo($versionStr = FALSE) {
 function hi_updateNotify() {
     //Display info-icon in editmenu, if updates are available
     global $sn, $o, $plugin_tx;
-    $o .= "\n";
+    $o .= PHP_EOL;
     $o .= '<script>
                     jQuery(document).ready(function($){
                         $("#editmenu_update").css("display","block"); //before xh1.6
                         $("#xh_adminmenu_update").css("display","block"); //sice xh1.6RC
                     });
-            </script>' . "\n";
+            </script>' . PHP_EOL;
 
     //Prepend notification to "Sysinfo" - page if updates are available
     if (isset($_GET['sysinfo'])) {
@@ -311,7 +314,7 @@ function hi_updateNotify() {
                 . '<br>'
                 . '<a href="' . $sn . '?&amp;hi_updatecheck&amp;admin=plugin_main&amp;normal">' . $plugin_tx['hi_updatecheck']['message_sysinfo-link'] . '</a>'
                 . '</div>';
-        $o .= $upd_msg_sysinfo . "\n";
+        $o .= $upd_msg_sysinfo . PHP_EOL;
     }
 }
 
@@ -324,7 +327,7 @@ function hi_updateCheckAll() {
     $temp = explode(',', $plugin_cf['hi_updatecheck']['ignore']);
     if (!in_array('CMSimple_XH', $temp)) {
         $t .= $plugin_tx['hi_updatecheck']['heading_updatecheck_core'];
-        $t .= '<b>' . $tx['sysinfo']['version'] . ':</b>' . tag('br');
+        $t .= '<b>' . $tx['sysinfo']['version'] . ':</b><br>';
         $t .= CMSIMPLE_XH_VERSION;
         if (defined('CMSIMPLE_XH_DATE'))
             $t .= '&nbsp;&nbsp;Released: ' . CMSIMPLE_XH_DATE;
@@ -368,13 +371,13 @@ function upd_addMenuEntry() {
     global $sn, $plugin_tx, $pth;
 
     $href = $sn . '?&amp;hi_updatecheck&amp;admin=plugin_main&amp;normal';
-    $t = "\n";
+    $t = PHP_EOL;
     $t .= '<script>
     jQuery(document).ready(function($){
         $("#edit_menu").append("<li id=\"editmenu_update\"><a href=\"' . $href . '\"><\/a></li>");                   //before xh1.6
         $("#xh_adminmenu > ul").append("<li id=\"xh_adminmenu_update\"><a href=\"' . $href . '\"><\/a></li>");       //since xh1.6RC
     });
-    </script>' . "\n";
+    </script>' . PHP_EOL;
     return $t;
 }
 
@@ -384,70 +387,109 @@ function upd_addMenuEntry() {
  */
 
 function hi_fsFileGetContents($url, $timeout = 30) {
-    // split URL
-    $parsedurl = parse_url($url);
-    // determine host, catch invalid calls
-    if (empty($parsedurl['host']))
-        throw new RuntimeException('host missing in URL ' . XH_hsc($url));
-    $host = $parsedurl['host'];
-    // determine path
-    $documentpath = empty($parsedurl['path']) ? '/' : $documentpath = $parsedurl['path'];
-    // determine params
-    if (!empty($parsedurl['query']))
-        $documentpath .= '?' . $parsedurl['query'];
-    // determine port
-    if (!empty($parsedurl['port'])) {
-        $port = $parsedurl['port'];
-    }
-    // determine scheme
-    switch ($parsedurl['scheme']) {
-        case 'https':
-            $scheme = 'ssl://';
-            $port = empty($port) ? '443' : $port;
-            break;
-        default:
-            $scheme = '';
-            $port = empty($port) ? '80' : $port;
-    }
-    // open socket
-    $fp = fsockopen($scheme . $host, $port, $errno, $errstr, $timeout);
-    if (!$fp)
-        throw new RuntimeException("cannot connect to $scheme$host:$port");
 
-    // send request
-    $request = "GET {$documentpath} HTTP/1.0\r\n";
-    $request .= "Host: {$host}\r\n";
-    $request .= "User-Agent: hi_UpdateChecker\r\n\r\n";
-    fputs($fp, $request);
+    $connect_timeout = 5;
+    $maxredir = 3;
+    $agent = ($_SERVER['SERVER_NAME'] ? $_SERVER['SERVER_NAME'] . ' ' : '')
+           . 'hi_UpdateChecker';
 
-    // read header
-    $header = '';
-    do {
-        $line = rtrim(fgets($fp));
-        $header .= $line . "\n";
-    } while (!empty($line) and ! feof($fp));
-    // read data
-    $result = '';
-    while (!feof($fp)) {
-        $result .= fgets($fp);
+    // cURL
+    if (extension_loaded('curl')) {
+        $ch = curl_init();
+        $options = array(
+            CURLOPT_URL             => $url,
+            CURLOPT_HEADER          => false,
+            CURLOPT_RETURNTRANSFER  => true,
+            CURLOPT_USERAGENT       => $agent,
+            CURLOPT_TIMEOUT         => $timeout,
+            CURLOPT_CONNECTTIMEOUT  => $connect_timeout,
+            CURLOPT_FRESH_CONNECT   => true,
+            CURLOPT_FOLLOWLOCATION  => true,
+            CURLOPT_MAXREDIRS       => $maxredir
+        );
+        curl_setopt_array($ch, $options);
+        $result = curl_exec ($ch);
+        if ($result !== false) {
+            $headers = curl_getinfo($ch);
+        } else {
+            throw new RuntimeException("cannot connect to $url");
+        }
+        curl_close($ch);
+        if (!empty($headers['http_code'])) {
+            $status = (int) $headers['http_code'];
+        }
+
+        if (in_array($status, Array(300, 301, 302, 303, 307))) {
+            throw new RuntimeException("server responded with $status");
+        }
+    } else {
+        // split URL
+        $parsedurl = parse_url($url);
+        // determine host, catch invalid calls
+        if (empty($parsedurl['host']))
+            throw new RuntimeException('host missing in URL ' . XH_hsc($url));
+        $host = $parsedurl['host'];
+        // determine path
+        $documentpath = empty($parsedurl['path']) ? '/' : $documentpath = $parsedurl['path'];
+        // determine params
+        if (!empty($parsedurl['query']))
+            $documentpath .= '?' . $parsedurl['query'];
+        // determine port
+        if (!empty($parsedurl['port'])) {
+            $port = $parsedurl['port'];
+        }
+        // determine scheme
+        switch ($parsedurl['scheme']) {
+            case 'https':
+                $scheme = 'ssl://';
+                $port = empty($port) ? '443' : $port;
+                break;
+            default:
+                $scheme = '';
+                $port = empty($port) ? '80' : $port;
+        }
+        // open socket
+        $fp = fsockopen($scheme . $host, $port, $errno, $errstr, $timeout);
+        if (!$fp)
+            throw new RuntimeException("cannot connect to $scheme$host:$port");
+
+        // send request
+        $request = "GET {$documentpath} HTTP/1.0\r\n";
+        $request .= "Host: {$host}\r\n";
+        $request .= "User-Agent: " . $agent . "\r\n\r\n";
+        fputs($fp, $request);
+
+        // read header
+        $header = '';
+        do {
+            $line = rtrim(fgets($fp));
+            $header .= $line . PHP_EOL;
+        } while (!empty($line) and ! feof($fp));
+        // read data
+        $result = '';
+        while (!feof($fp)) {
+            $result .= fgets($fp);
+        }
+        // close socket
+        fclose($fp);
+
+        // evaluate header
+        preg_match('~^HTTP/1\.\d (?P<status>\d+)~', $header, $matches);
+        $status = $matches['status'];
+
+        if (in_array($status, Array(300, 301, 302, 303, 307))) {
+            preg_match('~Location: (?P<location>\S+)~i', $header, $match);
+            $result = hi_fsFileGetContents($match['location'], $timeout);
+        }
     }
-    // close socket
-    fclose($fp);
 
-    // evaluate header
-    preg_match('~^HTTP/1\.\d (?P<status>\d+)~', $header, $matches);
-    $status = $matches['status'];
     if ($status == 200) { // OK
         return $result;
     } elseif ($status == 204 or $status == 304) { // No Content | Not modified
         return '';
-    } elseif (in_array($status, Array(300, 301, 302, 303, 307))) {
-        preg_match('~Location: (?P<location>\S+)~i', $header, $match);                                                                      
-        $result = hi_fsFileGetContents($match['location'], $timeout);
     } elseif ($status >= 400) { // Any error
         throw new RuntimeException("server responded with $status");
     }
 
-    // return reult
     return $result;
 }
