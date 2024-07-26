@@ -387,9 +387,10 @@ function upd_addMenuEntry() {
  */
 
 function hi_fsFileGetContents($url, $timeout = 30) {
+    global $plugin_cf;
 
-    $connect_timeout = 5;
-    $maxredir = 3;
+    $connect_timeout = (int)$plugin_cf['hi_updatecheck']['curl_connect_timeout'];
+    $maxredir = (int)$plugin_cf['hi_updatecheck']['curl_maxredir'];
     $agent = CMSIMPLE_URL
            . ', PHP:' . phpversion()
            . ', ' . CMSIMPLE_XH_VERSION;
