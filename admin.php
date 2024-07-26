@@ -25,7 +25,7 @@ if (!defined('CMSIMPLE_XH_VERSION')) {
 if (defined('CMSIMPLE_RELEASE')) {
     $o .= '<div class="upd_error">'
             . 'Sorry, Update-Check-Plugin can only work with the original CMSimple_XH from '
-            . '<a target="_blank" href="http://www.cmsimple-xh.org">www.cmsimple-xh.org.</a><br>'
+            . '<a target="_blank" href="https://www.cmsimple-xh.org">www.cmsimple-xh.org.</a><br>'
             . 'Please delete the folder /plugins/hi_updatecheck/ from your installation.'
             . '</div>';
     return;
@@ -35,7 +35,7 @@ define('UPD_VERSION', '1.5');
 define('UPD_DATE', '2023-06-20');
 
 //Path to core-Versioninfo
-define('CMSIMPLE_XH_VERSIONINFO', 'http://www.cmsimple-xh.org/userfiles/downloads/versioninfo/cmsimple_xh-version.nfo');
+define('CMSIMPLE_XH_VERSIONINFO', 'https://www.cmsimple-xh.org/userfiles/downloads/versioninfo/cmsimple_xh-version.nfo');
 
 include_once($pth['folder']['plugins'] . 'jquery/jquery.inc.php');
 include_jQuery();
