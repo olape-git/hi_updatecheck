@@ -8,8 +8,8 @@
  * ==================================================================
  * Update-Check-Plugin for CMSimple_XH
  * ==================================================================
- * Version:    1.6
- * Build:      2024080501
+ * Version:    1.6.1
+ * Build:      2024120201
  * Copyright:  Holger Irmler
  * Email:      CMSimple@HolgerIrmler.de
  * Website:    http://CMSimple.HolgerIrmler.de
@@ -301,13 +301,6 @@ function hi_versionInfo($versionStr = FALSE) {
 function hi_updateNotify() {
     //Display info-icon in editmenu, if updates are available
     global $sn, $o, $plugin_tx;
-    $o .= "\n";
-    $o .= '<script>
-                    jQuery(document).ready(function($){
-                        $("#editmenu_update").css("display","block"); //before xh1.6
-                        $("#xh_adminmenu_update").css("display","block"); //sice xh1.6RC
-                    });
-            </script>' . "\n";
 
     //Prepend notification to "Sysinfo" - page if updates are available
     if (isset($_GET['sysinfo'])) {
@@ -375,11 +368,14 @@ function upd_addMenuEntry() {
     $href = $sn . '?&amp;hi_updatecheck&amp;admin=plugin_main&amp;normal';
     $t = "\n";
     $t .= '<script>
-    jQuery(document).ready(function($){
-        $("#edit_menu").append("<li id=\"editmenu_update\"><a href=\"' . $href . '\"><\/a></li>");                   //before xh1.6
-        $("#xh_adminmenu > ul").append("<li id=\"xh_adminmenu_update\"><a href=\"' . $href . '\"><\/a></li>");       //since xh1.6RC
-    });
-    </script>' . "\n";
+    var DIV = document.getElementById("xh_adminmenu");
+    var UL = DIV.getElementsByTagName("ul")[0];
+    var newLI = document.createElement("li");
+    newLI.setAttribute("id", "xh_adminmenu_update");
+    newLI.innerHTML = "<a href=\"' . $href . '\"><\/a>";
+    UL.appendChild(newLI);
+    document.getElementById("xh_adminmenu_update").style.display = "block";
+</script>' . "\n";
     return $t;
 }
 
@@ -412,11 +408,15 @@ function hi_fsFileGetContents($url, $timeout = 30) {
             CURLOPT_MAXREDIRS       => $maxredir
         );
         curl_setopt_array($ch, $options);
-        $result = curl_exec ($ch);
+        $result = curl_exec($ch);
         if ($result !== false) {
             $headers = curl_getinfo($ch);
         } else {
-            $curlerror = (curl_errno($ch) ?  curl_errno($ch) : '');
+            $curlerror = (curl_errno($ch)
+                            ?  curl_errno($ch)
+                                . ' - '
+                                . curl_strerror(curl_errno($ch))
+                            : '');
             throw new RuntimeException("cannot connect to $url , $curlerror");
         }
         curl_close($ch);

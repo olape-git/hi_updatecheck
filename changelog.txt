@@ -1,3 +1,10 @@
+Version 1.6.1
+Extended error output
+Support for CMSimple_XH before 1.6 discontinued
+Typo in de.php removed
+TinyMCE 7 instead of TinyMCE 6 in exceptions
+Partially discontinued the use of jQuery
+
 Version 1.6
 replace PHP_EOL with LF ("/n") for html output (The output in XH is characterized by "/n" in most places.)
 PHP version and XH version as part of the UserAgent

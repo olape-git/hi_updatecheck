@@ -8,8 +8,8 @@
  * ==================================================================
  * Update-Check-Plugin for CMSimple_XH
  * ==================================================================
- * Version:    1.6
- * Build:      2024080501
+ * Version:    1.6.1
+ * Build:      2024120201
  * Copyright:  Holger Irmler
  * Email:      CMSimple@HolgerIrmler.de
  * Website:    http://CMSimple.HolgerIrmler.de
@@ -33,8 +33,8 @@ if (defined('CMSIMPLE_RELEASE')) {
     return;
 }
 
-define('UPD_VERSION', '1.6');
-define('UPD_DATE', '2024-08-05');
+define('UPD_VERSION', '1.6.1');
+define('UPD_DATE', '2024-12-02');
 
 //Path to core-Versioninfo
 define('CMSIMPLE_XH_VERSIONINFO', 'https://www.cmsimple-xh.org/userfiles/downloads/versioninfo/cmsimple_xh-version.nfo');
@@ -106,7 +106,7 @@ function hi_updateVersion() {
             . '<img src="' . $pth['folder']['plugins'] . 'hi_updatecheck/images/software-update-icon.png" class="upd_plugin_icon">'
             . '<p>Version: ' . UPD_VERSION . ' - ' . UPD_DATE . '</p>' . "\n"
             . '<p>Copyright &copy;2013-2023 <a href="http://cmsimple.holgerirmler.de/">Holger Irmler</a> - all rights reserved<br>'
-            . '<p>Copyright &copy;2014 <a href="https://www.cmsimple-xh.org/?About-CMSimple_XH/The-XH-Team">CMSimple_XH developers</a><br>'
+            . '<p>Copyright &copy;2024 <a href="https://www.cmsimple-xh.org/?About-CMSimple_XH/The-XH-Team">CMSimple_XH developers</a><br>'
             . '<p class="upd_license">License: GPL3</p>' . "\n"
             . '<p class="upd_license">THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR'
             . ' IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,'
